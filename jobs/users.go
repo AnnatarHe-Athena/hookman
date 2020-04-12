@@ -7,27 +7,42 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
+	"math/rand"
 	"net/http"
+	"strings"
 	"time"
 
+	"github.com/AnnatarHe-Athena/hookman/config"
 	"github.com/AnnatarHe-Athena/hookman/service"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/sirupsen/logrus"
 )
 
 func FetchUser() {
-
 }
 
 func fetchUserFeed(page int, uid string) (response GetWeiboFeedResponse, err error) {
+	ua := []string{
+		"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36",
+		"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36",
+		"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.92 Safari/537.36",
+		"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.92 Safari/537.36",
+		"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.92 Safari/537.36",
+		"Mozilla/5.0 (iPhone; CPU iPhone OS 13_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/81.0.4044.62 Mobile/15E148 Safari/604.1",
+		"Mozilla/5.0 (iPad; CPU OS 13_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/81.0.4044.62 Mobile/15E148 Safari/604.1",
+		"Mozilla/5.0 (iPod; CPU iPhone OS 13_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/81.0.4044.62 Mobile/15E148 Safari/604.1",
+		"Mozilla/5.0 (Linux; Android 10; SM-A205U) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.96 Mobile Safari/537.36",
+		"Mozilla/5.0 (Linux; Android 10; SM-N960U) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.96 Mobile Safari/537.36",
+	}
+
 	url := fmt.Sprintf("https://m.weibo.cn/api/container/getIndex?count=%d&page=%d&containerid=107603%s", 20, page, uid)
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return
 	}
 	req.Header.Set("Sec-Fetch-Dest", "document")
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36")
+	req.Header.Set("Upgrade-Insecure-Requests", "1")
+	req.Header.Set("User-Agent", ua[rand.Intn(len(ua))])
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
 		// continue
@@ -78,8 +93,9 @@ func UpdateUsersFor1week() error {
 	for _, userID := range userIDs {
 		page := 0
 		for page > -1 {
+			// 防止过多的请求
+			time.Sleep(time.Millisecond * 100)
 			f, err := fetchUserFeed(page, userID)
-
 			if err != nil {
 				panic(err)
 			}
@@ -90,10 +106,10 @@ func UpdateUsersFor1week() error {
 				}
 
 				for _, pic := range card.Mblog.Pics {
-
 					doc, err := goquery.NewDocumentFromReader(bytes.NewReader([]byte("<div>" + card.Mblog.Text + "</div>")))
 					if err != nil {
-						log.Fatal(err)
+						logrus.Errorln(err)
+						continue
 					}
 
 					maxLen := len(doc.Text())
@@ -119,14 +135,20 @@ func UpdateUsersFor1week() error {
 					}
 
 					if err := cell.Create(); err != nil {
-						logrus.Errorln(err)
+						if !strings.Contains(err.Error(), "duplicate key value violates") {
+							logrus.Errorln(err)
+						}
 						continue
 					}
 				}
-
 			}
 
-			page = -1
+			// 下一页
+			page++
+			// 只拉 5 页
+			if page > config.MaxPage {
+				page = -1
+			}
 		}
 	}
 

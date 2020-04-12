@@ -8,4 +8,5 @@ const (
 	RavenDSN  = ""
 	NRKey     = ""
 	DB_DSN    = "host=localhost user=postgres password=admin dbname=postgres sslmode=disable"
+	MaxPage   = 1
 )

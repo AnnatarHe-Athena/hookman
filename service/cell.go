@@ -23,7 +23,8 @@ type Cell struct {
 	Md5        string        `json:"md5"`
 }
 
-const paginationSize = 20000
+// 2020-04-12 接近 10w 条数据
+const paginationSize = 200000
 
 type withUid struct {
 	UID string `gorm:"column:uid"`
