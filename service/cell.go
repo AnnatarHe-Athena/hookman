@@ -54,7 +54,10 @@ func ListWeiboUsers(page int) (wbUserIDs []string, err error) {
 	return
 }
 
-func (c *Cell) Create() error {
+func TempUpdateUserDomainToUid(domainName, uid string) error {
+	return db.Table("cells").Where("from_id = ?", domainName).Update("from_id", uid).Error
+}
 
+func (c *Cell) Create() error {
 	return db.Table("cells").Create(c).Error
 }

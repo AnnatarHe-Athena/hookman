@@ -65,6 +65,7 @@ func fetchUserFeed(page int, uid string) (response GetWeiboFeedResponse, err err
 		return
 	}
 
+	logrus.Println(url)
 	logrus.Println(response.Ok)
 	if err != nil {
 		return response, err
@@ -83,8 +84,6 @@ func fetchUserFeed(page int, uid string) (response GetWeiboFeedResponse, err err
 
 func UpdateUsersFor1week() error {
 	userIDs, err := service.ListWeiboUsers(0)
-	logrus.Println(userIDs)
-	// return nil
 
 	if err != nil {
 		return err
@@ -93,11 +92,13 @@ func UpdateUsersFor1week() error {
 	for _, userID := range userIDs {
 		page := 0
 		for page > -1 {
+			logrus.Println("start: ", userID, page)
 			// 防止过多的请求
-			time.Sleep(time.Millisecond * 100)
 			f, err := fetchUserFeed(page, userID)
+			time.Sleep(time.Millisecond * 500)
 			if err != nil {
-				panic(err)
+				logrus.Errorln(err)
+				continue
 			}
 
 			for _, card := range f.Data.Cards {
