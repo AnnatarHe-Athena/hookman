@@ -31,12 +31,14 @@ type withUid struct {
 }
 
 func ListWeiboUsers(page int) (wbUserIDs []string, err error) {
+
 	var uids []withUid
 	// select DISTINCT(from_id) from cells where from_url like '%weibo.com%' and premission = 2
 	err = db.
 		Table("cells").
 		Where("premission = ?", 2).
 		Where("from_url like ?", "%weibo.com%").
+		Not("from_id", blacklist).
 		Select("DISTINCT(from_id) as uid").
 		Find(&uids).
 		Limit(paginationSize).

@@ -15,4 +15,5 @@
 # vendor/
 config/config.release.go
 mapping.json
+mapping2.json
 temp.exe
