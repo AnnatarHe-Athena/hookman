@@ -1,13 +1,11 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"time"
 
-	"github.com/AnnatarHe-Athena/hookman/service"
+	"github.com/AnnatarHe-Athena/hookman/jobs"
 	"github.com/sirupsen/logrus"
 )
 
@@ -21,25 +19,6 @@ func setupLogFile() {
 }
 
 func main() {
-	// setupLogFile()
-	// jobs.UpdateUsersFor1week()
-	update()
-}
-
-type t struct {
-	UserName string `json:"username"`
-	UID      string `json:"uid"`
-}
-
-func update() {
-	f, _ := ioutil.ReadFile("./mapping.json")
-
-	var mapping []t
-
-	json.Unmarshal(f, &mapping)
-
-	for _, d := range mapping {
-		err := service.TempUpdateUserDomainToUid(d.UserName, d.UID)
-		logrus.Println(err)
-	}
+	setupLogFile()
+	jobs.UpdateUsersFor1week()
 }

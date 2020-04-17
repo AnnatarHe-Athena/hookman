@@ -36,6 +36,7 @@ func fetchUserFeed(page int, uid string) (response GetWeiboFeedResponse, err err
 	}
 
 	url := fmt.Sprintf("https://m.weibo.cn/api/container/getIndex?count=%d&page=%d&containerid=107603%s", 20, page, uid)
+	logrus.Println(url)
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return
@@ -60,13 +61,11 @@ func fetchUserFeed(page int, uid string) (response GetWeiboFeedResponse, err err
 	err = json.Unmarshal(responseData, &response)
 
 	if err != nil {
-		logrus.Println(url)
+		logrus.Errorln(string(responseData))
 		// continue
 		return
 	}
 
-	logrus.Println(url)
-	logrus.Println(response.Ok)
 	if err != nil {
 		return response, err
 	}
@@ -92,10 +91,17 @@ func UpdateUsersFor1week() error {
 	for _, userID := range userIDs {
 		page := 0
 		for page > -1 {
+			// 只拉 5 页
+			if page > config.MaxPage {
+				page = -1
+			}
+
 			logrus.Println("start: ", userID, page)
 			// 防止过多的请求
 			f, err := fetchUserFeed(page, userID)
 			time.Sleep(time.Millisecond * 500)
+			page++
+			// 下一页
 			if err != nil {
 				logrus.Errorln(err)
 				continue
@@ -144,12 +150,6 @@ func UpdateUsersFor1week() error {
 				}
 			}
 
-			// 下一页
-			page++
-			// 只拉 5 页
-			if page > config.MaxPage {
-				page = -1
-			}
 		}
 	}
 
