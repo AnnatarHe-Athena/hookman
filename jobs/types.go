@@ -98,9 +98,9 @@ type GetWeiboFeedResponse struct {
 					URL  string `json:"url"`
 					Size string `json:"size"`
 					Geo  struct {
-						Width  int  `json:"width"`
-						Height int  `json:"height"`
-						Croped bool `json:"croped"`
+						Width  interface{} `json:"width"`
+						Height interface{} `json:"height"`
+						Croped bool        `json:"croped"`
 					} `json:"geo"`
 					Large struct {
 						Size string `json:"size"`

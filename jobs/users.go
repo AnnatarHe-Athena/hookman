@@ -93,16 +93,21 @@ func UpdateUsersFor1week() error {
 		for page > -1 {
 			// 只拉 5 页
 			if page > config.MaxPage {
-				page = -1
+				break
 			}
 
 			logrus.Println("start: ", userID, page)
 			// 防止过多的请求
-			f, err := fetchUserFeed(page, userID)
-			time.Sleep(time.Millisecond * 500)
+			f, err := fetchUserFeed(page+1, userID)
+			time.Sleep(time.Second)
 			page++
+
 			// 下一页
 			if err != nil {
+				if strings.Contains(err.Error(), "unexpected end of JSON input") {
+					// weibo 限制
+					time.Sleep(time.Minute)
+				}
 				logrus.Errorln(err)
 				continue
 			}
