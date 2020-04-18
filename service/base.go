@@ -4,6 +4,8 @@ import (
 	"github.com/AnnatarHe-Athena/hookman/config"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+	gormlog "github.com/onrik/logrus/gorm"
+	"github.com/sirupsen/logrus"
 )
 
 var db *gorm.DB
@@ -14,6 +16,7 @@ func init() {
 		panic(err)
 	}
 
+	d.SetLogger(gormlog.New(logrus.StandardLogger()))
 	d.LogMode(true)
 
 	db = d
