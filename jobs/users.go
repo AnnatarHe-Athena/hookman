@@ -1,7 +1,6 @@
 package jobs
 
 import (
-	"bytes"
 	"database/sql"
 	"encoding/json"
 	"errors"
@@ -14,7 +13,6 @@ import (
 
 	"github.com/AnnatarHe-Athena/hookman/config"
 	"github.com/AnnatarHe-Athena/hookman/service"
-	"github.com/PuerkitoBio/goquery"
 	"github.com/sirupsen/logrus"
 )
 
@@ -118,18 +116,20 @@ func UpdateUsersFor1week() error {
 				}
 
 				for _, pic := range card.Mblog.Pics {
-					doc, err := goquery.NewDocumentFromReader(bytes.NewReader([]byte("<div>" + card.Mblog.Text + "</div>")))
-					if err != nil {
-						logrus.Errorln(err)
-						continue
-					}
+					// doc, err := goquery.NewDocumentFromReader(bytes.NewReader([]byte("<div>" + card.Mblog.Text + "</div>")))
+					// if err != nil {
+					// 	logrus.Errorln(err)
+					// 	continue
+					// }
 
-					maxLen := len(doc.Text())
+					doc := card.Mblog.Text
+					// maxLen := len(doc.Text())
 
-					if maxLen > 255 {
-						maxLen = 255
-					}
-					content := doc.Text()[0:maxLen]
+					// if maxLen > 200 {
+					// 	maxLen = 200
+					// }
+					// content := doc.Text()[:maxLen]
+					content := doc
 
 					cell := &service.Cell{
 						Img:        pic.Pid,

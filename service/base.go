@@ -18,6 +18,7 @@ func init() {
 
 	d.SetLogger(gormlog.New(logrus.StandardLogger()))
 	d.LogMode(true)
+	d.Set("gorm:table_options", "charset=utf8")
 
 	db = d
 }

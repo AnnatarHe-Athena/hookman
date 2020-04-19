@@ -2,15 +2,17 @@ package service
 
 import (
 	"database/sql"
+	"strings"
 	"time"
 
 	"github.com/jinzhu/gorm"
+	"github.com/sirupsen/logrus"
 )
 
 type Cell struct {
 	ID         int           `json:"id"`
 	Img        string        `json:"img"`
-	Text       string        `json:"text"`
+	Text       string        `json:"text" gorm:"column:text;type:text"`
 	Permission int           `json:"permission" gorm:"column:premission"`
 	Cate       int           `json:"cate"`
 	FromID     string        `json:"fromID" gorm:"column:from_id"`
@@ -18,7 +20,7 @@ type Cell struct {
 	CreatedAt  time.Time     `json:"createdAt" gorm:"column:createdat"`
 	CreatedBy  sql.NullInt64 `json:"createdBy" gorm:"column:createdby"`
 	UpdatedAt  time.Time     `json:"updatedAt" gorm:"column:updatedat"`
-	Content    string        `json:"content"`
+	Content    string        `json:"content" gorm:"column:content;type:text"`
 	Likes      int           `json:"likes"`
 	Md5        string        `json:"md5"`
 }
@@ -61,5 +63,10 @@ func TempUpdateUserDomainToUid(domainName, uid string) error {
 }
 
 func (c *Cell) Create() error {
-	return db.Table("cells").Create(c).Error
+	err := db.Table("cells").Create(c).Error
+
+	if err != nil && strings.Contains(err.Error(), "invalid byte sequence for encoding") {
+		logrus.Errorln("invalid", c)
+	}
+	return err
 }
