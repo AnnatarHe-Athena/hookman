@@ -86,7 +86,7 @@ func UpdateUsersFor1week() error {
 		return err
 	}
 
-	for _, userID := range userIDs {
+	for idx, userID := range userIDs {
 		page := 0
 		for page > -1 {
 			// 只拉 5 页
@@ -95,6 +95,7 @@ func UpdateUsersFor1week() error {
 			}
 
 			logrus.Println("start: ", userID, page)
+			logrus.Println("progress: ", idx, "/", len(userIDs))
 			// 防止过多的请求
 			f, err := fetchUserFeed(page+1, userID)
 			time.Sleep(time.Second)
@@ -116,21 +117,7 @@ func UpdateUsersFor1week() error {
 				}
 
 				for _, pic := range card.Mblog.Pics {
-					// doc, err := goquery.NewDocumentFromReader(bytes.NewReader([]byte("<div>" + card.Mblog.Text + "</div>")))
-					// if err != nil {
-					// 	logrus.Errorln(err)
-					// 	continue
-					// }
-
-					doc := card.Mblog.Text
-					// maxLen := len(doc.Text())
-
-					// if maxLen > 200 {
-					// 	maxLen = 200
-					// }
-					// content := doc.Text()[:maxLen]
-					content := doc
-
+					content := card.Mblog.Text
 					cell := &service.Cell{
 						Img:        pic.Pid,
 						Cate:       177,
