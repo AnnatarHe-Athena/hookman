@@ -79,12 +79,34 @@ func fetchUserFeed(page int, uid string) (response GetWeiboFeedResponse, err err
 	return
 }
 
+func removeHeadUsers(userIDs []string) []string {
+	l := len(userIDs)
+	lastKey := "2892653037"
+	foundIndex := -1
+
+	for index, uid := range userIDs {
+		if uid == lastKey {
+			foundIndex = index
+			logrus.Println("break point: ", foundIndex)
+			break
+		}
+	}
+
+	if foundIndex == -1 {
+		panic("user id not found")
+	}
+
+	return userIDs[foundIndex:(l - 1)]
+}
+
 func UpdateUsersFor1week() error {
 	userIDs, err := service.ListWeiboUsers(0)
 
 	if err != nil {
 		return err
 	}
+
+	userIDs = removeHeadUsers(userIDs)
 
 	for idx, userID := range userIDs {
 		page := 0
