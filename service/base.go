@@ -13,7 +13,7 @@ var db *gorm.DB
 func init() {
 	d, err := gorm.Open("postgres", config.DB_DSN)
 	if err != nil {
-		panic(err)
+		logrus.Panicln(err)
 	}
 
 	d.SetLogger(gormlog.New(logrus.StandardLogger()))

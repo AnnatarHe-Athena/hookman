@@ -81,7 +81,7 @@ func fetchUserFeed(page int, uid string) (response GetWeiboFeedResponse, err err
 
 func removeHeadUsers(userIDs []string) []string {
 	l := len(userIDs)
-	lastKey := "2892653037"
+	lastKey := "6242625891"
 	foundIndex := -1
 
 	for index, uid := range userIDs {
@@ -93,7 +93,7 @@ func removeHeadUsers(userIDs []string) []string {
 	}
 
 	if foundIndex == -1 {
-		panic("user id not found")
+		logrus.Panicln("user id not found")
 	}
 
 	return userIDs[foundIndex:(l - 1)]
