@@ -7,6 +7,7 @@ import (
 
 	"github.com/AnnatarHe-Athena/hookman/jobs"
 	"github.com/sirupsen/logrus"
+	"github.com/urfave/cli/v2"
 )
 
 func setupLogFile() {
@@ -20,5 +21,28 @@ func setupLogFile() {
 
 func main() {
 	setupLogFile()
-	jobs.UpdateUsersFor1week()
+	app := &cli.App{
+		Name:  "hookman",
+		Usage: "athena cli tool",
+		Commands: []*cli.Command{
+			{
+				Name:  "updateWeiboUserInfo",
+				Usage: "update weibo users info",
+				Action: func(c *cli.Context) error {
+					return jobs.UpdateUsersFor1week()
+				},
+			},
+			{
+				Name:  "tagAll",
+				Usage: "set tags to all images",
+				Action: func(c *cli.Context) error {
+					return jobs.TagAll()
+				},
+			},
+		},
+	}
+
+	if err := app.Run(os.Args); err != nil {
+		logrus.Errorln(err)
+	}
 }
