@@ -35,7 +35,7 @@ var wordsTagNameMapping map[int][]string = map[int][]string{
 	13: []string{"🐻", "胸", "胖"},
 	14: []string{"臀"},
 	15: []string{"腿", "🦵", "黑丝", "jk"},
-	16: []string{"好吃的", "餐厅", "鸡腿"},
+	16: []string{"好吃的", "餐厅", "鸡腿", "午饭", "晚饭", "夜宵", "火锅", "烧烤", "🍲"},
 	17: []string{"景色", "风景", "山", "海", "湾"},
 	18: []string{},
 }
@@ -89,7 +89,7 @@ func AnalysisCell(c Cell) []TagCell {
 		}
 
 		for _, w := range words {
-			if !strings.Contains(strings.ToLower(c.Content), strings.ToLower(w)) {
+			if !strings.Contains(strings.ToLower(c.Text), strings.ToLower(w)) {
 				continue
 			}
 			connections = append(connections, TagCell{

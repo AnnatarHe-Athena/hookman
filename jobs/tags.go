@@ -29,11 +29,11 @@ func TagAll() error {
 			}
 		}
 
-		logrus.Println(len(tags), tags)
+		// logrus.Println(len(tags), tags)
 
-		// if err := service.SaveCellTags(tags); err != nil {
-		// 	return err
-		// }
+		if err := service.SaveCellTags(tags); err != nil {
+			return err
+		}
 	}
 
 	return nil

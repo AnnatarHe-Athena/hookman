@@ -7,4 +7,5 @@ require (
 	github.com/jinzhu/gorm v1.9.12
 	github.com/onrik/logrus v0.5.1
 	github.com/sirupsen/logrus v1.5.0
+	github.com/urfave/cli/v2 v2.3.0 // indirect
 )
