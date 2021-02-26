@@ -20,7 +20,7 @@ func setupLogFile() {
 }
 
 func main() {
-	setupLogFile()
+	// setupLogFile()
 	app := &cli.App{
 		Name:  "hookman",
 		Usage: "athena cli tool",
@@ -37,6 +37,20 @@ func main() {
 				Usage: "set tags to all images",
 				Action: func(c *cli.Context) error {
 					return jobs.TagAll()
+				},
+			},
+			{
+				Name:  "dumpTrainData",
+				Usage: "dump train data",
+				Action: func(c *cli.Context) error {
+					return jobs.DumpTrainData()
+				},
+			},
+			{
+				Name:  "images:download",
+				Usage: "downloadImages",
+				Action: func(c *cli.Context) error {
+					return jobs.DownloadImages("/Users/hele/code/hookman")
 				},
 			},
 		},

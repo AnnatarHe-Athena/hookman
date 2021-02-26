@@ -17,3 +17,8 @@ config/config.release.go
 mapping.json
 mapping2.json
 temp.exe
+images/
+.DS_Store
+aaa.txt
+dump.json
+images.zip

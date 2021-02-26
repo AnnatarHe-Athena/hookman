@@ -3,6 +3,8 @@ package service
 import (
 	"strings"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 type Tag struct {
@@ -19,6 +21,10 @@ type TagCell struct {
 	TagID  int `gorm:"column:tag_id"`
 }
 
+func (TagCell) TableName() string {
+	return "tags_girls"
+}
+
 var wordsTagNameMapping map[int][]string = map[int][]string{
 	1:  []string{"可爱", "可可爱爱", "洛丽塔", "白丝"},
 	2:  []string{"性感", "黑丝", "酒吧", "夜店", "HM", "BM"},
@@ -31,7 +37,7 @@ var wordsTagNameMapping map[int][]string = map[int][]string{
 	9:  []string{},
 	10: []string{"肌肉", "健身", "腹肌", "💪"},
 	11: []string{"男朋友", "帅哥"},
-	12: []string{"脸", "睫毛", "眼睛", "👀", "👄", "嘴巴", "耳朵", "👂", "鼻子", "👃", "化妆", "眼影", "妆容", "发色", "刘海"},
+	12: []string{"脸", "睫毛", "眼睛", "👀", "👄", "嘴巴", "耳朵", "👂", "鼻子", "👃", "化妆", "眼影", "妆容", "发色", "刘海", "宿舍"},
 	13: []string{"🐻", "胸", "胖"},
 	14: []string{"臀"},
 	15: []string{"腿", "🦵", "黑丝", "jk"},
@@ -103,5 +109,6 @@ func AnalysisCell(c Cell) []TagCell {
 }
 
 func SaveCellTags(tags []TagCell) error {
-	return db.Create(&tags).Error
+	logrus.Println(len(tags), tags)
+	return db.Table("tags_girls").Create(&tags).Error
 }

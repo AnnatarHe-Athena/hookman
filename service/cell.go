@@ -2,11 +2,12 @@ package service
 
 import (
 	"database/sql"
+	"errors"
 	"strings"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
+	"gorm.io/gorm"
 )
 
 type Cell struct {
@@ -47,7 +48,7 @@ func ListWeiboUsers(page int) (wbUserIDs []string, err error) {
 		Offset(page * paginationSize).
 		Error
 
-	if gorm.IsRecordNotFoundError(err) {
+	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return wbUserIDs, nil
 	}
 
