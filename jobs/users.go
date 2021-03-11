@@ -13,6 +13,7 @@ import (
 
 	"github.com/AnnatarHe-Athena/hookman/config"
 	"github.com/AnnatarHe-Athena/hookman/service"
+	"github.com/PuerkitoBio/goquery"
 	"github.com/sirupsen/logrus"
 )
 
@@ -138,8 +139,17 @@ func UpdateUsersFor1week() error {
 					continue
 				}
 
+				content := ""
+
+				doc, err := goquery.NewDocumentFromReader(strings.NewReader("<div>" + card.Mblog.Text + "</div>"))
+				if err != nil {
+					logrus.Errorln(err)
+				}
+				if err == nil {
+					content = doc.Text()
+				}
+
 				for _, pic := range card.Mblog.Pics {
-					content := card.Mblog.Text
 					cell := &service.Cell{
 						Img:        pic.Pid,
 						Cate:       177,
